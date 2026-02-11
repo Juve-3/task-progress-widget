@@ -1,1 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Task Progress Widget</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #020617;
+      --border: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --accent-good: #22c55e;   /* green */
+      --accent-medium: #eab308; /* yellow */
+      --accent-bad: #ef4444;    /* red */
+      --bar-bg: #1f2933;
+      --radius-lg: 16px;
+      --radius-full: 999px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.6);
+      --transition-fast: 0.25s ease;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
+      font-family: var(--font-main);
+      color: var(--text-main);
+    }
+
+    .widget {
+      max-width: 640px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, #020617, #020617, #0b1120);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 20px;
+    }
+
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .widget-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .widget-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.8);
+      white-space: nowrap;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 550px) {
+      .stats-grid {
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.1fr);
+      }
+    }
+
+    .stat-card {
+      background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 10px 11px 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-label {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-main-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .stat-caption {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--bar-bg);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      transition: width var(--transition-fast), background-color var(--transition-fast);
+      background: var(--accent-bad);
+    }
+
+    .progress-fill.good {
+      background: var(--accent-good);
+    }
+
+    .progress-fill.medium {
+      background: var(--accent-medium);
+    }
+
+    .progress-fill.bad {
+      background: var(--accent-bad);
+    }
+
+    .stat-footer {
+      margin-top: 5px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 2px 8px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .tasks-section {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(55, 65, 81, 0.8);
+    }
+
+    .tasks-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      gap: 8px;
+    }
+
+    .tasks-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .tasks-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .task-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      padding: 4px 6px;
+      border-radius: 10px;
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .task-item input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: #020617;
+      accent-color: var(--accent-good);
+    }
+
+    .task-item:hover {
+      background: rgba(15, 23, 42, 0.8);
+      transform: translateY(-1px);
+    }
+
+    .task-label {
+      flex: 1;
+    }
+
+    .task-completed .task-label {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-completed {
+      opacity: 0.8;
+    }
+
+    .empty-state {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 6px 0 2px;
+    }
+
+    .meta-row {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget">
+    <div class="widget-header">
+      <div>
+        <div class="widget-title">Daily Focus Tracker</div>
+        <div class="widget-subtitle" id="todayLabel">Today</div>
+      </div>
+      <div class="badge" id="weekLabel">Week</div>
+    </div>
+
+    <div class="stats-grid">
+      <!-- Daily -->
+      <div class="stat-card">
+        <div class="stat-label">Daily Completion</div>
+        <div class="stat-main-row">
+          <div class="stat-value" id="dailyValue">0%</div>
+          <div class="stat-caption" id="dailyCaption">0/0 tasks</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bad" id="dailyBar"></div>
+        </div>
+        <div class="stat-footer">
+          <span class="pill">Goal ≥ 80%</span>
+          <span id="dailyStatusText">Below target</span>
+        </div>
+      </div>
+
+      <!-- Weekly -->
+      <div class="stat-card">
+        <div class="stat-label">Weekly Goal</div>
+        <div class="stat-main-row">
+          <div class="stat-value" id="weeklyValue">0%</div>
+          <div class="stat-caption" id="weeklyCaption">0/5 days at ≥80%</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bad" id="weeklyBar"></div>
+        </div>
+        <div class="stat-footer">
+          <span class="pill">Target: 5+ days</span>
+          <span id="weeklyStatusText">No data yet</span>
+        </div>
+      </div>
+
+      <!-- Monthly -->
+      <div class="stat-card">
+        <div class="stat-label">Monthly Target</div>
+        <div class="stat-main-row">
+          <div class="stat-value" id="monthlyValue">0%</div>
+          <div class="stat-caption" id="monthlyCaption">0 days tracked</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bad" id="monthlyBar"></div>
+        </div>
+        <div class="stat-footer">
+          <span class="pill">Goal ≥ 75% avg</span>
+          <span id="monthlyStatusText">No data yet</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks inside the widget -->
+    <div class="tasks-section">
+      <div class="tasks-header">
+        <div class="tasks-title">Today’s Tasks</div>
+        <div class="tasks-hint">Check / uncheck to update stats</div>
+      </div>
+
+      <ul class="task-list" id="taskList">
+        <!-- Edit this list to match your real tasks -->
+        <li class="task-item">
+          <label class="task-label">
+            <input type="checkbox" class="task-checkbox" />
+            Morning planning & review
+          </label>
+        </li>
+        <li class="task-item">
+          <label class="task-label">
+            <input type="checkbox" class="task-checkbox" />
+            Deep work session (60+ min)
+          </label>
+        </li>
+        <li class="task-item">
+          <label class="task-label">
+            <input type="checkbox" class="task-checkbox" />
+            Admin / small tasks cleared
+          </label>
+        </li>
+        <li class="task-item">
+          <label class="task-label">
+            <input type="checkbox" class="task-checkbox" />
+            Learning / practice (30+ min)
+          </label>
+        </li>
+        <li class="task-item">
+          <label class="task-label">
+            <input type="checkbox" class="task-checkbox" />
+            End-of-day review
+          </label>
+        </li>
+      </ul>
+
+      <div class="empty-state">
+        Tip: edit the HTML to change task names or number of tasks.  
+        The widget saves each day’s completion and uses it for weekly & monthly stats.
+      </div>
+    </div>
+
+    <div class="meta-row">
+      <span id="monthLabel">Month</span>
+      <span>Auto-updates in real time</span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const DAILY_THRESHOLD = 0.8; // 80%
+      const WEEKLY_TARGET_DAYS = 5;
+      const MONTHLY_THRESHOLD = 0.75; // 75%
+      const STORAGE_KEY = "taskProgressWidget_stats_v1";
+
+      const dailyValueEl = document.getElementById("dailyValue");
+      const dailyCaptionEl = document.getElementById("dailyCaption");
+      const dailyBarEl = document.getElementById("dailyBar");
+      const dailyStatusTextEl = document.getElementById("dailyStatusText");
+
+      const weeklyValueEl = document.getElementById("weeklyValue");
+      const weeklyCaptionEl = document.getElementById("weeklyCaption");
+      const weeklyBarEl = document.getElementById("weeklyBar");
+      const weeklyStatusTextEl = document.getElementById("weeklyStatusText");
+
+      const monthlyValueEl = document.getElementById("monthlyValue");
+      const monthlyCaptionEl = document.getElementById("monthlyCaption");
+      const monthlyBarEl = document.getElementById("monthlyBar");
+      const monthlyStatusTextEl = document.getElementById("monthlyStatusText");
+
+      const todayLabelEl = document.getElementById("todayLabel");
+      const weekLabelEl = document.getElementById("weekLabel");
+      const monthLabelEl = document.getElementById("monthLabel");
+
+      const taskCheckboxes = Array.from(
+        document.querySelectorAll(".task-checkbox")
+      );
+
+      function formatDateKey(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      function getTodayKey() {
+        return formatDateKey(new Date());
+      }
+
+      function loadStats() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return {};
+          const data = JSON.parse(raw);
+          return typeof data === "object" && data !== null ? data : {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveStats(stats) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      function setBarColor(fillEl, ratio, goalRatio) {
+        if (!fillEl) return;
+        fillEl.classList.remove("good", "medium", "bad");
+
+        if (ratio <= 0) {
+          fillEl.classList.add("bad");
+        } else if (ratio >= goalRatio) {
+          fillEl.classList.add("good");
+        } else {
+          fillEl.classList.add("medium");
+        }
+      }
+
+      function updateDaily(stats) {
+        const total = taskCheckboxes.length;
+        const completed = taskCheckboxes.filter((cb) => cb.checked).length;
+        const ratio = total === 0 ? 0 : completed / total;
+        const percentage = Math.round(ratio * 100);
+
+        dailyValueEl.textContent = `${percentage}%`;
+        dailyCaptionEl.textContent = `${completed}/${total} tasks`;
+
+        dailyBarEl.style.width = `${percentage}%`;
+        setBarColor(dailyBarEl, ratio, DAILY_THRESHOLD);
+
+        if (total === 0) {
+          dailyStatusTextEl.textContent = "No tasks today";
+        } else if (ratio >= DAILY_THRESHOLD) {
+          dailyStatusTextEl.textContent = "Goal reached 🎉";
+        } else if (ratio > 0) {
+          dailyStatusTextEl.textContent = "In progress";
+        } else {
+          dailyStatusTextEl.textContent = "Below target";
+        }
+
+        const todayKey = getTodayKey();
+        stats[todayKey] = { completed, total };
+        saveStats(stats);
+      }
+
+      function startOfWeek(date) {
+        const d = new Date(date);
+        const day = d.getDay(); // 0 (Sun) - 6 (Sat)
+        const diffToMonday = day === 0 ? -6 : 1 - day; // Monday as start
+        d.setDate(d.getDate() + diffToMonday);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+
+      function updateWeekly(stats) {
+        const now = new Date();
+        const monday = startOfWeek(now);
+        const daysWithGoal = [];
+        let reached = 0;
+
+        for (let i = 0; i < 7; i++) {
+          const day = new Date(monday);
+          day.setDate(monday.getDate() + i);
+          const key = formatDateKey(day);
+          const dayStats = stats[key];
+
+          if (dayStats && dayStats.total > 0) {
+            const ratio = dayStats.completed / dayStats.total;
+            const meetsGoal = ratio >= DAILY_THRESHOLD;
+            if (meetsGoal) reached++;
+            daysWithGoal.push({ key, ratio, meetsGoal });
+          }
+        }
+
+        const progressRatio =
+          WEEKLY_TARGET_DAYS === 0
+            ? 0
+            : Math.min(reached, WEEKLY_TARGET_DAYS) / WEEKLY_TARGET_DAYS;
+        const percentage = Math.round(progressRatio * 100);
+
+        weeklyValueEl.textContent = `${percentage}%`;
+        weeklyCaptionEl.textContent = `${reached}/${WEEKLY_TARGET_DAYS} days at ≥80%`;
+        weeklyBarEl.style.width = `${percentage}%`;
+        setBarColor(weeklyBarEl, progressRatio, 1);
+
+        if (daysWithGoal.length === 0) {
+          weeklyStatusTextEl.textContent = "No data yet";
+        } else if (reached >= WEEKLY_TARGET_DAYS) {
+          weeklyStatusTextEl.textContent = "Weekly goal reached ✅";
+        } else if (reached > 0) {
+          weeklyStatusTextEl.textContent = "On your way";
+        } else {
+          weeklyStatusTextEl.textContent = "Not yet started";
+        }
+
+        // Label for the week: "Week of Feb 10"
+        const options = { month: "short", day: "numeric" };
+        const label = `Week of ${monday.toLocaleDateString(undefined, options)}`;
+        weekLabelEl.textContent = label;
+      }
+
+      function updateMonthly(stats) {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth(); // 0-based
+
+        let sumRatios = 0;
+        let dayCount = 0;
+
+        Object.entries(stats).forEach(([key, value]) => {
+          const [y, m, d] = key.split("-").map((n) => parseInt(n, 10));
+          if (
+            y === currentYear &&
+            m === currentMonth + 1 &&
+            value &&
+            value.total > 0
+          ) {
+            const ratio = value.completed / value.total;
+            sumRatios += ratio;
+            dayCount++;
+          }
+        });
+
+        if (dayCount === 0) {
+          monthlyValueEl.textContent = `0%`;
+          monthlyCaptionEl.textContent = "0 days tracked";
+          monthlyBarEl.style.width = "0%";
+          setBarColor(monthlyBarEl, 0, MONTHLY_THRESHOLD);
+          monthlyStatusTextEl.textContent = "No data yet";
+          return;
+        }
+
+        const avgRatio = sumRatios / dayCount;
+        const percentage = Math.round(avgRatio * 100);
+
+        monthlyValueEl.textContent = `${percentage}%`;
+        monthlyCaptionEl.textContent = `${dayCount} day${
+          dayCount === 1 ? "" : "s"
+        } tracked`;
+        monthlyBarEl.style.width = `${percentage}%`;
+        setBarColor(monthlyBarEl, avgRatio, MONTHLY_THRESHOLD);
+
+        if (avgRatio >= MONTHLY_THRESHOLD) {
+          monthlyStatusTextEl.textContent = "On target this month ✅";
+        } else {
+          monthlyStatusTextEl.textContent = "Below monthly target";
+        }
+
+        const monthLabel = now.toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric",
+        });
+        monthLabelEl.textContent = `Month: ${monthLabel}`;
+      }
+
+      function updateTaskStyles() {
+        const items = Array.from(document.querySelectorAll(".task-item"));
+        items.forEach((item) => {
+          const cb = item.querySelector('input[type="checkbox"]');
+          if (cb && cb.checked) {
+            item.classList.add("task-completed");
+          } else {
+            item.classList.remove("task-completed");
+          }
+        });
+      }
+
+      function updateAll() {
+        const stats = loadStats();
+        updateDaily(stats);
+        updateWeekly(stats);
+        updateMonthly(stats);
+        updateTaskStyles();
+
+        const today = new Date();
+        todayLabelEl.textContent = today.toLocaleDateString(undefined, {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      taskCheckboxes.forEach((cb) => {
+        cb.addEventListener("change", updateAll);
+      });
+
+      // Initial paint
+      updateAll();
+    })();
+  </script>
+</body>
+</html>
 
