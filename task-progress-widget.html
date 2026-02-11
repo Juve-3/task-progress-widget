@@ -180,8 +180,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .tasks-title {
@@ -189,9 +190,76 @@
       font-weight: 500;
     }
 
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 2px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    .tab-button {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-button.active {
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+
     .tasks-hint {
       font-size: 0.7rem;
       color: var(--text-muted);
+    }
+
+    .task-input-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+      flex-wrap: nowrap;
+    }
+
+    .task-input-row input {
+      flex: 1;
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      font-size: 0.78rem;
+      outline: none;
+    }
+
+    .task-input-row input::placeholder {
+      color: rgba(148, 163, 184, 0.8);
+    }
+
+    .task-input-row button {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.78rem;
+      cursor: pointer;
+      background: #22c55e;
+      color: #020617;
+      font-weight: 500;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .task-input-row button:hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.45);
+      opacity: 0.95;
     }
 
     .task-list {
@@ -229,15 +297,38 @@
 
     .task-label {
       flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .task-completed .task-label {
+    .task-text {
+      flex: 1;
+    }
+
+    .task-completed .task-text {
       text-decoration: line-through;
       color: var(--text-muted);
     }
 
     .task-completed {
-      opacity: 0.8;
+      opacity: 0.85;
+    }
+
+    .task-delete {
+      border: none;
+      background: transparent;
+      color: rgba(148, 163, 184, 0.9);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 6px;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .task-delete:hover {
+      background: rgba(31, 41, 55, 0.95);
+      color: #f97373;
     }
 
     .empty-state {
@@ -253,6 +344,186 @@
       font-size: 0.68rem;
       color: var(--text-muted);
       opacity: 0.75;
+    }
+
+    .tab-panel {
+      margin-top: 6px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Calendar & history */
+
+    .history-wrapper {
+      margin-top: 4px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .history-section-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .calendar {
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 8px;
+      background: radial-gradient(circle at top left, #0b1120 0, #020617 60%);
+    }
+
+    .calendar-header-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      font-size: 0.66rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .calendar-day {
+      min-height: 20px;
+      font-size: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 0;
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.9);
+      cursor: default;
+    }
+
+    .calendar-day.inactive {
+      opacity: 0.3;
+    }
+
+    .calendar-day.good {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: rgba(34, 197, 94, 0.6);
+      color: #bbf7d0;
+    }
+
+    .calendar-day.medium {
+      background: rgba(234, 179, 8, 0.2);
+      border-color: rgba(234, 179, 8, 0.7);
+      color: #fef3c7;
+    }
+
+    .calendar-day.bad {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.7);
+      color: #fecaca;
+    }
+
+    .calendar-day.today {
+      box-shadow: 0 0 0 1px rgba(248, 250, 252, 0.6);
+    }
+
+    .calendar-day.no-data {
+      opacity: 0.4;
+    }
+
+    .calendar-legend {
+      display: flex;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-top: 4px;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    .legend-good {
+      background: rgba(34, 197, 94, 0.4);
+      border-color: rgba(34, 197, 94, 0.9);
+    }
+
+    .legend-medium {
+      background: rgba(234, 179, 8, 0.4);
+      border-color: rgba(234, 179, 8, 0.9);
+    }
+
+    .legend-bad {
+      background: rgba(239, 68, 68, 0.4);
+      border-color: rgba(239, 68, 68, 0.9);
+    }
+
+    .legend-none {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(51, 65, 85, 0.9);
+    }
+
+    .history-insights {
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 8px 9px;
+      background: radial-gradient(circle at top left, #020617 0, #020617 60%);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .insights-title {
+      font-size: 0.78rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #e5e7eb;
+    }
+
+    .insights-summary {
+      margin-bottom: 4px;
+    }
+
+    .insights-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .insights-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .insight-label {
+      color: #e5e7eb;
+    }
+
+    .insight-value {
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    #calendarDetail {
+      margin-top: 4px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
   </style>
 </head>
@@ -316,55 +587,78 @@
       </div>
     </div>
 
-    <!-- Tasks inside the widget -->
+    <!-- Tabs + content -->
     <div class="tasks-section">
       <div class="tasks-header">
-        <div class="tasks-title">Today’s Tasks</div>
-        <div class="tasks-hint">Check / uncheck to update stats</div>
+        <div class="tasks-title">Focus Dashboard</div>
+        <div class="tabs">
+          <button class="tab-button active" data-tab="today">Today</button>
+          <button class="tab-button" data-tab="history">History</button>
+        </div>
       </div>
 
-      <ul class="task-list" id="taskList">
-        <!-- Edit this list to match your real tasks -->
-        <li class="task-item">
-          <label class="task-label">
-            <input type="checkbox" class="task-checkbox" />
-            Morning planning & review
-          </label>
-        </li>
-        <li class="task-item">
-          <label class="task-label">
-            <input type="checkbox" class="task-checkbox" />
-            Deep work session (60+ min)
-          </label>
-        </li>
-        <li class="task-item">
-          <label class="task-label">
-            <input type="checkbox" class="task-checkbox" />
-            Admin / small tasks cleared
-          </label>
-        </li>
-        <li class="task-item">
-          <label class="task-label">
-            <input type="checkbox" class="task-checkbox" />
-            Learning / practice (30+ min)
-          </label>
-        </li>
-        <li class="task-item">
-          <label class="task-label">
-            <input type="checkbox" class="task-checkbox" />
-            End-of-day review
-          </label>
-        </li>
-      </ul>
+      <!-- TODAY TAB -->
+      <div class="tab-panel" id="tab-today">
+        <div class="tasks-hint">Add tasks, then check / uncheck to update stats</div>
+        <div class="task-input-row">
+          <input
+            id="newTaskInput"
+            type="text"
+            placeholder="Add a task and press Enter or Add"
+          />
+          <button id="addTaskBtn" type="button">Add</button>
+        </div>
 
-      <div class="empty-state">
-        Tip: edit the HTML to change task names or number of tasks.  
-        The widget saves each day’s completion and uses it for weekly & monthly stats.
+        <ul class="task-list" id="taskList">
+          <!-- Tasks rendered by JS -->
+        </ul>
+
+        <div class="empty-state">
+          Tasks and stats are stored in this browser only. Each new day starts with fresh checkboxes, but your previous days stay in the history.
+        </div>
+      </div>
+
+      <!-- HISTORY TAB -->
+      <div class="tab-panel hidden" id="tab-history">
+        <div class="history-wrapper">
+          <div>
+            <div class="history-section-title" id="monthLabel">Month overview</div>
+            <div class="calendar">
+              <div class="calendar-header-row">
+                <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+              </div>
+              <div class="calendar-grid" id="calendarDays"></div>
+              <div class="calendar-legend">
+                <div class="legend-item">
+                  <span class="legend-swatch legend-good"></span><span>≥80%</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-swatch legend-medium"></span><span>0–79%</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-swatch legend-bad"></span><span>0% with tasks</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-swatch legend-none"></span><span>No data</span>
+                </div>
+              </div>
+              <div id="calendarDetail">Click a day to see its stats.</div>
+            </div>
+          </div>
+
+          <div class="history-insights">
+            <div class="insights-title">Weekly Insights</div>
+            <div class="insights-summary" id="insightsSummary">
+              No data yet. Start checking off tasks to build your history.
+            </div>
+            <ul class="insights-list" id="insightsList"></ul>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="meta-row">
-      <span id="monthLabel">Month</span>
+      <span id="footerMonthLabel">Month</span>
       <span>Auto-updates in real time</span>
     </div>
   </div>
@@ -374,7 +668,16 @@
       const DAILY_THRESHOLD = 0.8; // 80%
       const WEEKLY_TARGET_DAYS = 5;
       const MONTHLY_THRESHOLD = 0.75; // 75%
-      const STORAGE_KEY = "taskProgressWidget_stats_v1";
+      const STATS_KEY = "taskProgressWidget_stats_v1";
+      const TASKS_KEY = "taskProgressWidget_tasks_v1";
+
+      const DEFAULT_TASK_LABELS = [
+        "Morning planning & review",
+        "Deep work session (60+ min)",
+        "Admin / small tasks cleared",
+        "Learning / practice (30+ min)",
+        "End of day review",
+      ];
 
       const dailyValueEl = document.getElementById("dailyValue");
       const dailyCaptionEl = document.getElementById("dailyCaption");
@@ -394,10 +697,20 @@
       const todayLabelEl = document.getElementById("todayLabel");
       const weekLabelEl = document.getElementById("weekLabel");
       const monthLabelEl = document.getElementById("monthLabel");
+      const footerMonthLabelEl = document.getElementById("footerMonthLabel");
 
-      const taskCheckboxes = Array.from(
-        document.querySelectorAll(".task-checkbox")
-      );
+      const taskListEl = document.getElementById("taskList");
+      const newTaskInput = document.getElementById("newTaskInput");
+      const addTaskBtn = document.getElementById("addTaskBtn");
+
+      const calendarDaysEl = document.getElementById("calendarDays");
+      const calendarDetailEl = document.getElementById("calendarDetail");
+      const insightsSummaryEl = document.getElementById("insightsSummary");
+      const insightsListEl = document.getElementById("insightsList");
+
+      const tabButtons = document.querySelectorAll(".tab-button");
+      const tabToday = document.getElementById("tab-today");
+      const tabHistory = document.getElementById("tab-history");
 
       function formatDateKey(date) {
         const y = date.getFullYear();
@@ -412,7 +725,7 @@
 
       function loadStats() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
+          const raw = localStorage.getItem(STATS_KEY);
           if (!raw) return {};
           const data = JSON.parse(raw);
           return typeof data === "object" && data !== null ? data : {};
@@ -423,10 +736,42 @@
 
       function saveStats(stats) {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+          localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+        } catch (e) {}
+      }
+
+      function loadTasks() {
+        try {
+          const raw = localStorage.getItem(TASKS_KEY);
+          if (!raw) return null;
+          const data = JSON.parse(raw);
+          if (!Array.isArray(data)) return null;
+          return data;
         } catch (e) {
-          // ignore
+          return null;
         }
+      }
+
+      function saveTasks(tasks) {
+        try {
+          localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+        } catch (e) {}
+      }
+
+      function ensureTasks() {
+        let tasks = loadTasks();
+        if (!tasks || tasks.length === 0) {
+          tasks = DEFAULT_TASK_LABELS.map((label, idx) => ({
+            id: "t" + idx,
+            label,
+          }));
+          saveTasks(tasks);
+        }
+        return tasks;
+      }
+
+      function getTaskCheckboxes() {
+        return Array.from(document.querySelectorAll(".task-checkbox"));
       }
 
       function setBarColor(fillEl, ratio, goalRatio) {
@@ -442,31 +787,42 @@
         }
       }
 
-      function updateDaily(stats) {
-        const total = taskCheckboxes.length;
-        const completed = taskCheckboxes.filter((cb) => cb.checked).length;
-        const ratio = total === 0 ? 0 : completed / total;
-        const percentage = Math.round(ratio * 100);
+      function updateDaily(stats, initial) {
+        const todayKey = getTodayKey();
+        const taskCheckboxes = getTaskCheckboxes();
+        const totalCheckboxes = taskCheckboxes.length;
 
+        let completed, total, ratio;
+
+        if (initial && stats[todayKey]) {
+          // On first load, if we have stats for today, show them instead of overwriting
+          total = stats[todayKey].total;
+          completed = stats[todayKey].completed;
+          ratio = total === 0 ? 0 : completed / total;
+        } else {
+          total = totalCheckboxes;
+          completed = taskCheckboxes.filter((cb) => cb.checked).length;
+          ratio = total === 0 ? 0 : completed / total;
+
+          stats[todayKey] = { completed, total };
+          saveStats(stats);
+        }
+
+        const percentage = Math.round((ratio || 0) * 100);
         dailyValueEl.textContent = `${percentage}%`;
         dailyCaptionEl.textContent = `${completed}/${total} tasks`;
-
         dailyBarEl.style.width = `${percentage}%`;
-        setBarColor(dailyBarEl, ratio, DAILY_THRESHOLD);
+        setBarColor(dailyBarEl, ratio || 0, DAILY_THRESHOLD);
 
         if (total === 0) {
           dailyStatusTextEl.textContent = "No tasks today";
-        } else if (ratio >= DAILY_THRESHOLD) {
+        } else if ((ratio || 0) >= DAILY_THRESHOLD) {
           dailyStatusTextEl.textContent = "Goal reached 🎉";
-        } else if (ratio > 0) {
+        } else if ((ratio || 0) > 0) {
           dailyStatusTextEl.textContent = "In progress";
         } else {
           dailyStatusTextEl.textContent = "Below target";
         }
-
-        const todayKey = getTodayKey();
-        stats[todayKey] = { completed, total };
-        saveStats(stats);
       }
 
       function startOfWeek(date) {
@@ -519,7 +875,6 @@
           weeklyStatusTextEl.textContent = "Not yet started";
         }
 
-        // Label for the week: "Week of Feb 10"
         const options = { month: "short", day: "numeric" };
         const label = `Week of ${monday.toLocaleDateString(undefined, options)}`;
         weekLabelEl.textContent = label;
@@ -534,7 +889,7 @@
         let dayCount = 0;
 
         Object.entries(stats).forEach(([key, value]) => {
-          const [y, m, d] = key.split("-").map((n) => parseInt(n, 10));
+          const [y, m] = key.split("-").map((n) => parseInt(n, 10));
           if (
             y === currentYear &&
             m === currentMonth + 1 &&
@@ -553,30 +908,30 @@
           monthlyBarEl.style.width = "0%";
           setBarColor(monthlyBarEl, 0, MONTHLY_THRESHOLD);
           monthlyStatusTextEl.textContent = "No data yet";
-          return;
-        }
-
-        const avgRatio = sumRatios / dayCount;
-        const percentage = Math.round(avgRatio * 100);
-
-        monthlyValueEl.textContent = `${percentage}%`;
-        monthlyCaptionEl.textContent = `${dayCount} day${
-          dayCount === 1 ? "" : "s"
-        } tracked`;
-        monthlyBarEl.style.width = `${percentage}%`;
-        setBarColor(monthlyBarEl, avgRatio, MONTHLY_THRESHOLD);
-
-        if (avgRatio >= MONTHLY_THRESHOLD) {
-          monthlyStatusTextEl.textContent = "On target this month ✅";
         } else {
-          monthlyStatusTextEl.textContent = "Below monthly target";
+          const avgRatio = sumRatios / dayCount;
+          const percentage = Math.round(avgRatio * 100);
+
+          monthlyValueEl.textContent = `${percentage}%`;
+          monthlyCaptionEl.textContent = `${dayCount} day${
+            dayCount === 1 ? "" : "s"
+          } tracked`;
+          monthlyBarEl.style.width = `${percentage}%`;
+          setBarColor(monthlyBarEl, avgRatio, MONTHLY_THRESHOLD);
+
+          if (avgRatio >= MONTHLY_THRESHOLD) {
+            monthlyStatusTextEl.textContent = "On target this month ✅";
+          } else {
+            monthlyStatusTextEl.textContent = "Below monthly target";
+          }
         }
 
         const monthLabel = now.toLocaleDateString(undefined, {
           month: "long",
           year: "numeric",
         });
-        monthLabelEl.textContent = `Month: ${monthLabel}`;
+        monthLabelEl.textContent = `Month overview – ${monthLabel}`;
+        footerMonthLabelEl.textContent = `Month: ${monthLabel}`;
       }
 
       function updateTaskStyles() {
@@ -591,12 +946,191 @@
         });
       }
 
-      function updateAll() {
+      function renderTasks() {
+        const tasks = ensureTasks();
+        taskListEl.innerHTML = "";
+
+        tasks.forEach((task) => {
+          const li = document.createElement("li");
+          li.className = "task-item";
+          li.dataset.taskId = task.id;
+
+          const label = document.createElement("label");
+          label.className = "task-label";
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.className = "task-checkbox";
+
+          const span = document.createElement("span");
+          span.className = "task-text";
+          span.textContent = task.label;
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "task-delete";
+          deleteBtn.textContent = "✕";
+          deleteBtn.title = "Remove task";
+
+          cb.addEventListener("change", () => {
+            updateAll(false);
+          });
+
+          deleteBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const currentTasks = ensureTasks();
+            const filtered = currentTasks.filter((t) => t.id !== task.id);
+            saveTasks(filtered);
+            renderTasks();
+            updateAll(false);
+          });
+
+          label.appendChild(cb);
+          label.appendChild(span);
+          li.appendChild(label);
+          li.appendChild(deleteBtn);
+
+          taskListEl.appendChild(li);
+        });
+
+        updateTaskStyles();
+      }
+
+      function buildCalendar(stats) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const todayKey = getTodayKey();
+
+        calendarDaysEl.innerHTML = "";
+
+        const firstDay = new Date(year, month, 1);
+        const firstWeekday = firstDay.getDay(); // 0 Sun - 6 Sat
+        const mondayIndex = (firstWeekday + 6) % 7; // 0 for Monday
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        // leading blanks
+        for (let i = 0; i < mondayIndex; i++) {
+          const cell = document.createElement("div");
+          cell.className = "calendar-day inactive";
+          calendarDaysEl.appendChild(cell);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const date = new Date(year, month, day);
+          const key = formatDateKey(date);
+          const value = stats[key];
+          let ratio = null;
+          let cls = "calendar-day no-data";
+
+          if (value && value.total > 0) {
+            ratio = value.completed / value.total;
+            if (ratio >= DAILY_THRESHOLD) {
+              cls = "calendar-day good";
+            } else if (ratio > 0) {
+              cls = "calendar-day medium";
+            } else {
+              cls = "calendar-day bad";
+            }
+          }
+
+          const cell = document.createElement("div");
+          cell.className = cls;
+          if (key === todayKey) cell.classList.add("today");
+          cell.textContent = day;
+          cell.dataset.dateKey = key;
+          cell.dataset.ratio = ratio != null ? ratio.toString() : "";
+
+          cell.addEventListener("click", () => {
+            showDayDetail(key, value);
+          });
+
+          calendarDaysEl.appendChild(cell);
+        }
+      }
+
+      function showDayDetail(key, value) {
+        if (!value || value.total === 0) {
+          calendarDetailEl.textContent = "No data recorded for this day.";
+          return;
+        }
+        const [y, m, d] = key.split("-").map((n) => parseInt(n, 10));
+        const date = new Date(y, m - 1, d);
+        const ratio = value.completed / value.total;
+        const pct = Math.round(ratio * 100);
+        const label = date.toLocaleDateString(undefined, {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        });
+        calendarDetailEl.textContent = `${label}: ${pct}% (${value.completed}/${value.total} tasks)`;
+      }
+
+      function updateInsights(stats) {
+        const now = new Date();
+        const recent = [];
+
+        for (let i = 0; i < 7; i++) {
+          const day = new Date(now);
+          day.setDate(now.getDate() - i);
+          const key = formatDateKey(day);
+          const value = stats[key];
+          if (value && value.total > 0) {
+            const ratio = value.completed / value.total;
+            recent.push({ date: new Date(day), key, ratio, value });
+          }
+        }
+
+        if (recent.length === 0) {
+          insightsSummaryEl.textContent =
+            "No tracking data for this week yet. Aim for 80%+ completion on 5 days.";
+          insightsListEl.innerHTML = "";
+          return;
+        }
+
+        recent.sort((a, b) => a.date - b.date);
+
+        const lowEnergy = recent.filter((r) => r.ratio < 0.5);
+        const daysAboveGoal = recent.filter((r) => r.ratio >= DAILY_THRESHOLD);
+
+        insightsSummaryEl.textContent =
+          `Last 7 days: ${daysAboveGoal.length} day(s) at ≥80% and ` +
+          `${lowEnergy.length} lower-energy day(s) (<50%).`;
+
+        insightsListEl.innerHTML = "";
+        recent.forEach((r) => {
+          const li = document.createElement("li");
+          const labelSpan = document.createElement("span");
+          labelSpan.className = "insight-label";
+          labelSpan.textContent = r.date.toLocaleDateString(undefined, {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          });
+
+          const valueSpan = document.createElement("span");
+          valueSpan.className = "insight-value";
+          const pct = Math.round(r.ratio * 100);
+          let tag = "";
+          if (r.ratio >= DAILY_THRESHOLD) tag = "✅ strong";
+          else if (r.ratio >= 0.5) tag = "• medium";
+          else tag = "⚠ needs focus";
+          valueSpan.textContent = `${pct}% (${r.value.completed}/${r.value.total}) ${tag}`;
+
+          li.appendChild(labelSpan);
+          li.appendChild(valueSpan);
+          insightsListEl.appendChild(li);
+        });
+      }
+
+      function updateAll(initial) {
         const stats = loadStats();
-        updateDaily(stats);
+        updateDaily(stats, initial);
         updateWeekly(stats);
         updateMonthly(stats);
         updateTaskStyles();
+        buildCalendar(stats);
+        updateInsights(stats);
 
         const today = new Date();
         todayLabelEl.textContent = today.toLocaleDateString(undefined, {
@@ -606,14 +1140,46 @@
         });
       }
 
-      taskCheckboxes.forEach((cb) => {
-        cb.addEventListener("change", updateAll);
+      function addTaskFromInput() {
+        const value = newTaskInput.value.trim();
+        if (!value) return;
+
+        const tasks = ensureTasks();
+        const id = "t" + Date.now().toString(36);
+        tasks.push({ id, label: value });
+        saveTasks(tasks);
+        newTaskInput.value = "";
+        renderTasks();
+        updateAll(false);
+      }
+
+      addTaskBtn.addEventListener("click", addTaskFromInput);
+      newTaskInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          addTaskFromInput();
+        }
+      });
+
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const tab = btn.dataset.tab;
+          if (tab === "today") {
+            tabToday.classList.remove("hidden");
+            tabHistory.classList.add("hidden");
+          } else {
+            tabToday.classList.add("hidden");
+            tabHistory.classList.remove("hidden");
+          }
+        });
       });
 
       // Initial paint
-      updateAll();
+      renderTasks();
+      updateAll(true);
     })();
   </script>
 </body>
 </html>
-
